@@ -1,0 +1,9 @@
+.idea
+
+assets/img/*
+!assets/img/background.png
+
+calendar.png
+calendar.html
+
+config.ini
