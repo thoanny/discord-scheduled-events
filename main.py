@@ -8,10 +8,13 @@ import asyncio
 import pytz
 from datetime import datetime, timedelta
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
-from slugify import slugify
+
+import locale
+
+locale.setlocale(locale.LC_TIME, '')
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -75,40 +78,35 @@ for event in events:
     if start <= start_date <= end:
 
         html = """
-            <div class="event col-start-#WEEKDAY# row-start-1 relative">
-                #BACKGROUND#
-                <div class="relative z-20 bg-black bg-opacity-30 h-full p-4 flex flex-wrap items-center text-center content-center gap-2">
-                    <div class="start-end text-xl font-semibold">#START# - #END#</div>
+            <div class="event w-1/5 pb-5 shadow-xl">
+                <div class="relative z-20 h-full flex flex-col items-center justify-start text-center content-center gap-4">
                     #LOGO#
-                    <div class="title text-3xl font-bold">#TITLE#</div>
+                    <div class="day tracking-wider uppercase text-xl font-bold uppercase px-4">#DAY#</div>
+                    <div class="time tracking-tighter start-end text-xl text-gray-500 font-semibold uppercase px-4 -mt-4">#START# - #END#</div>
+                    <div class="title text-2xl font-bold px-4">#TITLE#</div>
                     #DESCRIPTION#
                 </div>
             </div>
         """
 
         title = event['name'].replace('🔴', '').strip()
-
-        image = ''
-        if event['image'] is not None:
-            image = '<div class="background w-full h-full absolute z-10"><img src="https://cdn.discordapp.com/guild-events/'+event['id']+'/'+event['image']+'.png?size=1024" class="object-cover w-full h-full" /></div>'
+        title = title.replace('[Jeu découvre]', '')
 
         description = ''
         if event['description'] is not None:
-            description = '<div class="description text-xl font-semibold leading-6">'+event['description']+'</div>'
+            description = '<div class="description text-lg leading-6 px-4">' + event['description'] + '</div>'
 
-        logo = ''
-        logoUrl = slugify(title) + '.png'
+        logoUrl = 'https://cdn.discordapp.com/guild-events/'+event['id']+'/'+event['image']+'.png?size=640'
         print('logoUrl:', logoUrl)
-        if path.exists('assets/img/'+logoUrl):
-            logo = '<div class="icon"><img src="assets/img/'+logoUrl+'" class="w-3/5 mx-auto my-2" /></div>'
+        logo = '<div class="image"><img src="' + logoUrl + '" class="w-full h-full object-cover aspect-video" /></div>'
 
-        html = html.replace('#START#', start_date.strftime('%H:%M'))
-        html = html.replace('#END#', end_date.strftime('%H:%M'))
+        html = html.replace('#DAY#', start_date.strftime('%A'))
+        html = html.replace('#START#', start_date.strftime('%H h %M'))
+        html = html.replace('#END#', end_date.strftime('%H h %M'))
         html = html.replace('#TITLE#', title)
         html = html.replace('#DESCRIPTION#', description)
-        html = html.replace('#BACKGROUND#', image)
         html = html.replace('#LOGO#', logo)
-        html = html.replace('#WEEKDAY#', str(start_date.weekday()+1))
+        html = html.replace('#WEEKDAY#', str(start_date.weekday()))
 
         eventsHTML = eventsHTML + html
 
@@ -121,10 +119,13 @@ f.write(tpl)
 f.close()
 
 options = webdriver.ChromeOptions()
-options.headless = True
-s = Service(ChromeDriverManager().install())
+options.add_argument('--headless')
+options.add_argument("--start-maximized")
+
+s = ChromeService(ChromeDriverManager().install())
+
 driver = webdriver.Chrome(service=s, options=options)
-driver.maximize_window()
+
 driver.implicitly_wait(3)
 
 driver.get("file:///" + calendar)

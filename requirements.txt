@@ -1,5 +1,5 @@
-aiohttp==3.8.1
-pytz==2022.1
-selenium==4.3.0
+aiohttp==3.8.6
+pytz==2023.3
+selenium==4.14.0
 unicode_slugify==0.1.5
-webdriver_manager==3.5.4
+webdriver_manager==4.0.1

@@ -1,9 +1,10 @@
 <!doctype html>
 <html>
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         #calendar {
             width: 1920px;
@@ -14,17 +15,18 @@
         }
 
         .event {
-            border-radius: .5rem;
+            border-radius: 1rem;
             overflow: hidden;
-            background: black;
-            text-shadow: 0 0 3px #000;
+            background: #fff;
+            color: #111;
         }
 
-        .event .relative > div {
+        .event .relative>div {
             width: 100%;
         }
     </style>
 </head>
+
 <body>
 
     <div id="calendar" class="py-4 px-6">
@@ -33,18 +35,10 @@
             Du #START# au #END#
         </div>
 
-        <div id="weekdays" class="grid grid-cols-7 text-center text-2xl font-semibold uppercase gap-4 mt-24 mb-6">
-            <h4>Lundi</h4>
-            <h4>Mardi</h4>
-            <h4>Mercredi</h4>
-            <h4>Jeudi</h4>
-            <h4>Vendredi</h4>
-            <h4>Samedi</h4>
-            <h4>Dimanche</h4>
-        </div>
-
-        <div id="events" class="grid grid-cols-7 gap-4 h-2/5">
-            #EVENTS#
+        <div class="max-w-7xl mx-auto" style="height: 45vh;">
+            <div id="events" class="flex gap-4 mt-24 justify-center">
+                #EVENTS#
+            </div>
         </div>
 
         <div id="infos" class="text-center mt-24 text-4xl font-bold">
@@ -54,4 +48,5 @@
     </div>
 
 </body>
+
 </html>
